@@ -4,7 +4,7 @@ import Console from "@/components/Console";
 import { useRouter } from "next/router";
 import { useRouter as useNav } from "next/navigation";
 import Link from "next/link";
-import { Grid, Grid2X2, List } from "lucide-react";
+import { Grid2X2, List } from "lucide-react";
 
 const Home: React.FC = () => {
   const [dirs, setDirs] = useState<string[]>([]);
@@ -58,7 +58,7 @@ const Home: React.FC = () => {
             </button>
           </div>
         </div>
-        <FileList dir={dirs.length > 0 ? dirs[dirs.length - 1] : "box"} />
+        <FileList isGridView={isGridView} dir={dirs.length > 0 ? dirs[dirs.length - 1] : "box"} />
         {/* <button onClick={handleAddDir} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
           {"add dir"}
         </button> */}
