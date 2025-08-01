@@ -22,7 +22,7 @@ export default function Console({ children, className }: ConsoleProps) {
         className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
       >
        <AppBar/>
-        <main className="p-4 max-h-[calc(100vh-64px)] min-h-[calc(100vh-64px)] bg-zinc-950 border rounded-ss-2xl overflow-y-auto small-scrollbar">{children}</main>
+        <main className="p-4 max-h-[calc(100vh-72px)] min-h-[calc(100vh-72px)] bg-zinc-950 border rounded-ss-2xl overflow-y-auto small-scrollbar">{children}</main>
       </div>
     </div>
   );
