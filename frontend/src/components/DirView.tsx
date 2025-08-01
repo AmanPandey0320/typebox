@@ -1,10 +1,10 @@
 import React from "react";
 
-interface FileListProps {
+interface DirViewProps {
   dir: string;
 }
 
-const FileList: React.FC<FileListProps> = ({ dir }) => {
+const DirView: React.FC<DirViewProps> = ({ dir }) => {
   return (
     <div className="text-white">
       {dir}
@@ -12,4 +12,4 @@ const FileList: React.FC<FileListProps> = ({ dir }) => {
   );
 };
 
-export default FileList;
+export default DirView;
