@@ -22,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.typebox.backend.entity.FileEntity;
 import com.typebox.backend.pojo.SavedFile;
 import com.typebox.backend.repository.FileRepository;
+import com.typebox.backend.util.Constant;
 
 import jakarta.annotation.PostConstruct;
 
@@ -60,7 +61,7 @@ public class FileService {
 				"box", 
 				"Box", 
 				fileStorageLocation.toAbsolutePath().toString(), 
-				"file", 
+				Constant.FileType.FOLDER, 
 				"gray", 
 				"user", 
 				"box"
@@ -73,7 +74,7 @@ public class FileService {
 	 * @param file
 	 * @return
 	 */
-	private String saveFile(MultipartFile file) {
+	private String saveToLocal(MultipartFile file) {
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		
 		logger.info("saving file: {}",fileName);
@@ -101,29 +102,51 @@ public class FileService {
 	}
 	
 	/**
+	 * save file info to db
+	 * @param path
+	 * @param user
+	 * @param baseDir
+	 * @param name
+	 * @return
+	 */
+	private String saveFileInfoToDb(String path,String user, String baseDir,String name,String type) {
+		FileEntity fileEntity = new FileEntity();
+		
+		fileEntity.setFilePath(path);
+		fileEntity.setOwnerId(user);
+		fileEntity.setName(name);
+		fileEntity.setParentDir(baseDir);
+		fileEntity.setType(type);
+		
+		fileEntity = this.fileRepository.save(fileEntity);
+		
+		return fileEntity.getId();
+	}
+	
+	/**
 	 * save file in local directory and save location in db
 	 * @param files
 	 * @return
 	 */
-	public List<SavedFile> uploadFile (MultipartFile[] files) {
+	public List<SavedFile> uploadFile (MultipartFile[] files,String baseDir) {
 		List<SavedFile> savedFiles = new ArrayList<>();
 		
 		for(MultipartFile file:files) {
 			SavedFile f = new SavedFile();
 			try {
 				//save in local file
-				String path = this.saveFile(file);
+				String path = this.saveToLocal(file);
 				
 				//save to db
-				FileEntity fileEntity = new FileEntity();
+				String id = this.saveFileInfoToDb(
+						path, 
+						"user", 
+						baseDir, 
+						StringUtils.cleanPath(file.getOriginalFilename()),
+						Constant.FileType.FILE
+				);
 				
-				fileEntity.setFilePath(path);
-				fileEntity.setOwnerId("user");
-				fileEntity.setName(StringUtils.cleanPath(file.getOriginalFilename()));
-				
-				fileEntity = this.fileRepository.save(fileEntity);
-				
-				f.setId(fileEntity.getId());
+				f.setId(id);
 			}catch(Exception e) {
 				f.setId(null);
 				f.setError(e.getLocalizedMessage());
@@ -160,15 +183,30 @@ public class FileService {
         }
     }
     
-    public Path createFolderInStorageLocation(String folderName,String baseDir) {
+    /**
+     * 
+     * @param folderName
+     * @param baseDir
+     * @return id of created folder
+     */
+    public String createFolderInStorageLocation(String folderName,String baseDir) {
+    	FileEntity baseFolder = fileRepository.findById(baseDir)
+    			.orElseThrow(() -> new RuntimeException("Folder not found with id " + baseDir));
         try {
             // Normalize and resolve the folder path inside the base storage location
-            Path folderPath = fileStorageLocation.resolve(folderName).normalize();
+            Path folderPath = Paths.get(baseFolder.getFilePath()).normalize().resolve(folderName).normalize();
 
             // Create the directory including any nonexistent parent directories
             Files.createDirectories(folderPath);
+            
+            return this.saveFileInfoToDb(
+            		folderPath.toString().toString(), 
+            		"user", 
+            		baseDir, 
+            		folderName,
+            		Constant.FileType.FOLDER
+            );
 
-            return folderPath;
         } catch (IOException e) {
             throw new RuntimeException("Could not create directory '" + folderName + "' in " + fileStorageLocation, e);
         }

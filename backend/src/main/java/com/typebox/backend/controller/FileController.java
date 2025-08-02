@@ -29,10 +29,10 @@ public class FileController {
 	
 	
 	@PostMapping("/upload")
-	public ResponseEntity<?> uploadFile(@RequestParam("files") MultipartFile[] files){
+	public ResponseEntity<?> uploadFile(@RequestParam("files") MultipartFile[] files,@RequestParam("baseDir") String baseDir){
 		
 		try {
-			List<SavedFile> savedFiles = this.fileService.uploadFile(files);
+			List<SavedFile> savedFiles = this.fileService.uploadFile(files,baseDir);
 			
 			return new ResponseHandler()
 					.status(HttpStatus.OK)
@@ -66,8 +66,20 @@ public class FileController {
 	@PostMapping("/create_folder")
 	public ResponseEntity<?> createFolder(
 			@RequestParam("name") String folderName,
-			@RequestParam("dir") String dir
+			@RequestParam("baseDir") String dir
 			){
-		return null;
+		try {
+			String id = this.fileService.createFolderInStorageLocation(folderName, dir);
+			return new ResponseHandler()
+					.status(HttpStatus.OK)
+					.data(List.of(id))
+					.build();
+			
+		}catch(Exception e) {
+			return new ResponseHandler()
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.error(List.of(e.getLocalizedMessage()))
+					.build();
+		}
 	}
 }
