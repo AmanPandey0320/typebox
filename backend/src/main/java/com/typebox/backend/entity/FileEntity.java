@@ -16,7 +16,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
+@Entity(name = "files")
 public class FileEntity {
 
     @Id
@@ -28,7 +28,7 @@ public class FileEntity {
 
     private String filePath;
 
-    private String type;
+    private String type = "file";
 
     private String color = "gray"; 
 

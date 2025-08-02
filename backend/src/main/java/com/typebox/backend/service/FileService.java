@@ -83,10 +83,15 @@ public class FileService {
 				String path = this.saveFile(file);
 				
 				//save to db
-//				FileEntity fileEntity = new FileEntity();
+				FileEntity fileEntity = new FileEntity();
 				
-//				fileEntity.set
-				f.setId(path);
+				fileEntity.setFilePath(path);
+				fileEntity.setOwnerId("user");
+				fileEntity.setName(StringUtils.cleanPath(file.getOriginalFilename()));
+				
+				fileEntity = this.fileRepository.save(fileEntity);
+				
+				f.setId(fileEntity.getId());
 			}catch(Exception e) {
 				f.setId(null);
 				f.setError(e.getLocalizedMessage());
