@@ -74,7 +74,7 @@ public class FileService {
 	 * @param file
 	 * @return
 	 */
-	private String saveToLocal(MultipartFile file) {
+	private String saveToLocal(MultipartFile file,String destFolder) {
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		
 		logger.info("saving file: {}",fileName);
@@ -86,7 +86,7 @@ public class FileService {
 			}
 
 			// resolve the target location
-			Path targetLocation = this.fileStorageLocation.resolve(fileName);
+			Path targetLocation = Paths.get(destFolder).normalize().resolve(fileName);
 
 			// copy files
 			Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
@@ -129,13 +129,16 @@ public class FileService {
 	 * @return
 	 */
 	public List<SavedFile> uploadFile (MultipartFile[] files,String baseDir) {
+		FileEntity baseFolder = fileRepository.findById(baseDir)
+    			.orElseThrow(() -> new RuntimeException("Folder not found with id " + baseDir));
+		
 		List<SavedFile> savedFiles = new ArrayList<>();
 		
 		for(MultipartFile file:files) {
 			SavedFile f = new SavedFile();
 			try {
 				//save in local file
-				String path = this.saveToLocal(file);
+				String path = this.saveToLocal(file,baseFolder.getFilePath());
 				
 				//save to db
 				String id = this.saveFileInfoToDb(
