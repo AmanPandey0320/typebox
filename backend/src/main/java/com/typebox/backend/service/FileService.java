@@ -1,6 +1,7 @@
 package com.typebox.backend.service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,6 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.typebox.backend.entity.FileEntity;
 import com.typebox.backend.pojo.SavedFile;
 import com.typebox.backend.repository.FileRepository;
+
 
 
 @Service
@@ -72,7 +76,11 @@ public class FileService {
 		}
 	}
 	
-	
+	/**
+	 * save file in local directory and save location in db
+	 * @param files
+	 * @return
+	 */
 	public List<SavedFile> uploadFile (MultipartFile[] files) {
 		List<SavedFile> savedFiles = new ArrayList<>();
 		
@@ -101,5 +109,31 @@ public class FileService {
 		
 		return savedFiles;
 	}
+	
+	
+	/**
+     * Load file as a Resource by file ID (UUID string)
+     * 
+     * @param fileId UUID string of the file entity
+     * @return Resource
+     */
+    public Resource loadFileAsResource(String fileId) {
+        // Fetch file metadata from DB
+        FileEntity fileEntity = fileRepository.findById(fileId)
+                .orElseThrow(() -> new RuntimeException("File not found with id " + fileId));
+
+        try {
+            Path filePath = Paths.get(fileEntity.getFilePath()).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (resource.exists() && resource.isReadable()) {
+                return resource;
+            } else {
+                throw new RuntimeException("File not found or not readable: " + fileEntity.getName());
+            }
+        } catch (MalformedURLException ex) {
+            throw new RuntimeException("File path is invalid: " + fileEntity.getFilePath(), ex);
+        }
+    }
 
 }
