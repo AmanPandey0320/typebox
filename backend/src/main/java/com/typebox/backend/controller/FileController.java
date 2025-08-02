@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.typebox.backend.entity.FileEntity;
 import com.typebox.backend.pojo.SavedFile;
 import com.typebox.backend.service.FileService;
 import com.typebox.backend.service.FolderService;
@@ -111,9 +112,10 @@ public class FileController {
 	@GetMapping("/define/{id}")
 	public ResponseEntity<?> defineFile(@PathVariable("id") String id){
 		try {
+			FileEntity file = this.fileService.getFileDetails(id);
 			return new ResponseHandler()
 					.status(HttpStatus.OK)
-					.data(List.of(this.fileService.getFileDetails(id)))
+					.data(List.of(file,this.folderService.getBaseToFileRoute(file.getFilePath())))
 					.build();
 		}catch(Exception e) {
 			return new ResponseHandler()

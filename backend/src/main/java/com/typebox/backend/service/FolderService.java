@@ -98,5 +98,15 @@ public class FolderService {
     	
     	return files;
     }
+    
+    
+    public String[] getBaseToFileRoute(String path){
+    	Path targetPath = Paths.get(path);
+    	String relativePath = this.fileStorageLocation.relativize(targetPath).toString();
+    	
+    	return relativePath.toString().split("[/\\\\]");
+    }
+    
+    
 
 }
