@@ -5,30 +5,40 @@ import { useRouter } from "next/router";
 import { useRouter as useNav } from "next/navigation";
 import Link from "next/link";
 import { Grid2X2, List } from "lucide-react";
+import { getFileDefination } from "@/components/dirView/lib";
 
 const Home: React.FC = () => {
   const [dirs, setDirs] = useState<string[]>([]);
+  const [dirsName,setDirName] = useState<string[]>([]);
+  const [isLoaded,setLoaded] = useState(false);
   const [isGridView, setIsGridView] = useState<boolean>(true);
   const query = useRouter().query;
   const nav = useNav();
 
   useEffect(() => {
+    setLoaded(false);
     const dir = query?.dir as string || "box";
     const currDirs = dir.split("/");
-    setDirs(currDirs);
+    getFileDefination(currDirs[currDirs.length - 1]).then(data => {
+      const names = data[1] || [];
+      setDirName(['box',...names]);
+      setDirs(currDirs);
+    }).finally(() => {
+      setLoaded(true);
+    })
+    
   }, [query.dir]);
 
   const toggleView = (view: boolean) => {
     setIsGridView(view);
   };
-  // const handleAddDir = () => {
-  //   nav.push(`/?dir=${query?.dir as string || "Box"}/aman-${dirs.length + 1}`);
-  // }
+
+
 
 
   return (
     <Console>
-      <div className="flex flex-col gap-2">
+      {isLoaded  ?<div className="flex flex-col gap-2">
         {/* <h1 className="text-3xl text-zinc-300 font-semibold p-2">{"Welcome to TypeBox!"}</h1> */}
         <div className="flex flex-row items-center justify-between">
           <div className="flex flex-row text-zinc-400 text-sm">
@@ -36,7 +46,7 @@ const Home: React.FC = () => {
               dirs.map((d, index) => (
                 <Fragment key={index}>
                   <Link href={`/?dir=${dirs.slice(0, index + 1).join("/")}`} className="text-zinc-400 hover:text-zinc-300 text-sm py-2 px-1">
-                    {d}
+                    {dirsName.at(index)}
                   </Link>
                   {
                     dirs.length - 1 !== index && (
@@ -62,7 +72,7 @@ const Home: React.FC = () => {
         {/* <button onClick={handleAddDir} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
           {"add dir"}
         </button> */}
-      </div>
+      </div> : <div></div>}
     </Console>
   );
 };
