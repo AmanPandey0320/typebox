@@ -1,2 +1,2 @@
 app:
-  uploadPath: "D:/my_projects/typeBox/uploads/"
+  uploadPath: "your_upload_path"
