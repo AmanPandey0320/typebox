@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.typebox.backend.pojo.SavedFile;
 import com.typebox.backend.service.FileService;
+import com.typebox.backend.service.FolderService;
 import com.typebox.backend.util.ResponseHandler;
 
 @RestController
@@ -26,6 +27,9 @@ public class FileController {
 	
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private FolderService folderService;
 	
 	
 	@PostMapping("/upload")
@@ -69,7 +73,7 @@ public class FileController {
 			@RequestParam("baseDir") String dir
 			){
 		try {
-			String id = this.fileService.createFolderInStorageLocation(folderName, dir);
+			String id = this.folderService.createFolderInStorageLocation(folderName, dir);
 			return new ResponseHandler()
 					.status(HttpStatus.OK)
 					.data(List.of(id))
@@ -81,5 +85,16 @@ public class FileController {
 					.error(List.of(e.getLocalizedMessage()))
 					.build();
 		}
+	}
+	
+	/**
+	 * get all files and folder of a directory
+	 * for a folder with id = id
+	 * @param id
+	 * @return
+	 */
+	@GetMapping("/ls/{id}")
+	public ResponseEntity<?> getLsOfDirectory(@PathVariable("id") String id){
+		return null;
 	}
 }

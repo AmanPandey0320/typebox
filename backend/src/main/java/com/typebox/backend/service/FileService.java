@@ -23,6 +23,7 @@ import com.typebox.backend.entity.FileEntity;
 import com.typebox.backend.pojo.SavedFile;
 import com.typebox.backend.repository.FileRepository;
 import com.typebox.backend.util.Constant;
+import com.typebox.backend.util.FileUtil;
 
 import jakarta.annotation.PostConstruct;
 
@@ -45,28 +46,6 @@ public class FileService {
 		super();
 		this.fileRepository = fileRepository;
 		this.fileStorageLocation = Paths.get(uploadDirectory).toAbsolutePath().normalize();
-	}
-	
-	/**
-	 * 
-	 */
-	@PostConstruct
-	private void createBase() {
-		if(fileRepository.findById("box").isPresent()) {
-			return;
-		}
-		
-		// create if not
-		fileRepository.insertFileEntity(
-				"box", 
-				"Box", 
-				fileStorageLocation.toAbsolutePath().toString(), 
-				Constant.FileType.FOLDER, 
-				"gray", 
-				"user", 
-				"box"
-		);
-
 	}
 
 	/**
@@ -102,28 +81,6 @@ public class FileService {
 	}
 	
 	/**
-	 * save file info to db
-	 * @param path
-	 * @param user
-	 * @param baseDir
-	 * @param name
-	 * @return
-	 */
-	private String saveFileInfoToDb(String path,String user, String baseDir,String name,String type) {
-		FileEntity fileEntity = new FileEntity();
-		
-		fileEntity.setFilePath(path);
-		fileEntity.setOwnerId(user);
-		fileEntity.setName(name);
-		fileEntity.setParentDir(baseDir);
-		fileEntity.setType(type);
-		
-		fileEntity = this.fileRepository.save(fileEntity);
-		
-		return fileEntity.getId();
-	}
-	
-	/**
 	 * save file in local directory and save location in db
 	 * @param files
 	 * @return
@@ -141,15 +98,17 @@ public class FileService {
 				String path = this.saveToLocal(file,baseFolder.getFilePath());
 				
 				//save to db
-				String id = this.saveFileInfoToDb(
+				FileEntity fileEntity = FileUtil.getEntityFrom(
 						path, 
-						"user", 
+						"user", // TODO: to be changes when authn/authz in implemented
 						baseDir, 
 						StringUtils.cleanPath(file.getOriginalFilename()),
 						Constant.FileType.FILE
 				);
 				
-				f.setId(id);
+				fileEntity = this.fileRepository.save(fileEntity);
+				
+				f.setId(fileEntity.getId());
 			}catch(Exception e) {
 				f.setId(null);
 				f.setError(e.getLocalizedMessage());
@@ -183,35 +142,6 @@ public class FileService {
             }
         } catch (MalformedURLException ex) {
             throw new RuntimeException("File path is invalid: " + fileEntity.getFilePath(), ex);
-        }
-    }
-    
-    /**
-     * 
-     * @param folderName
-     * @param baseDir
-     * @return id of created folder
-     */
-    public String createFolderInStorageLocation(String folderName,String baseDir) {
-    	FileEntity baseFolder = fileRepository.findById(baseDir)
-    			.orElseThrow(() -> new RuntimeException("Folder not found with id " + baseDir));
-        try {
-            // Normalize and resolve the folder path inside the base storage location
-            Path folderPath = Paths.get(baseFolder.getFilePath()).normalize().resolve(folderName).normalize();
-
-            // Create the directory including any nonexistent parent directories
-            Files.createDirectories(folderPath);
-            
-            return this.saveFileInfoToDb(
-            		folderPath.toString().toString(), 
-            		"user", 
-            		baseDir, 
-            		folderName,
-            		Constant.FileType.FOLDER
-            );
-
-        } catch (IOException e) {
-            throw new RuntimeException("Could not create directory '" + folderName + "' in " + fileStorageLocation, e);
         }
     }
 
