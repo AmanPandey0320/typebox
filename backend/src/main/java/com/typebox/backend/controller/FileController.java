@@ -95,6 +95,16 @@ public class FileController {
 	 */
 	@GetMapping("/ls/{id}")
 	public ResponseEntity<?> getLsOfDirectory(@PathVariable("id") String id){
-		return null;
+		try {
+			return new ResponseHandler()
+					.status(HttpStatus.OK)
+					.data(this.folderService.ls(id))
+					.build();
+		}catch(Exception e) {
+			return new ResponseHandler()
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.error(List.of(e.getLocalizedMessage()))
+					.build();
+		}
 	}
 }

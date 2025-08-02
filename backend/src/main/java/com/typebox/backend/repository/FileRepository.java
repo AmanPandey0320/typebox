@@ -1,5 +1,7 @@
 package com.typebox.backend.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,6 +14,9 @@ import jakarta.transaction.Transactional;
 
 @Repository
 public interface FileRepository extends CrudRepository<FileEntity,String> {
+	
+	List<FileEntity> findByParentDir(String parentDir);
+	
 	@Modifying
 	@Transactional
 	@Query(value = "INSERT INTO files (id, name, file_path, type, color, owner_id, created_at, last_modified, is_deleted, parent_dir) " +

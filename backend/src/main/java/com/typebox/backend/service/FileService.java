@@ -34,7 +34,6 @@ public class FileService {
 	
 	private final Logger logger = LogManager.getLogger(FileService.class);
 
-	private final Path fileStorageLocation;
 	private FileRepository fileRepository;
 
 	/**
@@ -42,10 +41,9 @@ public class FileService {
 	 * @param fileRepository
 	 * @param uploadDirectory
 	 */
-	public FileService(FileRepository fileRepository, @Value("${app.uploadPath}") String uploadDirectory) {
+	public FileService(FileRepository fileRepository) {
 		super();
 		this.fileRepository = fileRepository;
-		this.fileStorageLocation = Paths.get(uploadDirectory).toAbsolutePath().normalize();
 	}
 
 	/**

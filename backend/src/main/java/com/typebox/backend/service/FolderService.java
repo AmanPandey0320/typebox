@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +55,7 @@ public class FolderService {
 				Constant.FileType.FOLDER, 
 				"gray", 
 				"user", 
-				"box"
+				"root"
 		);
 
 	}
@@ -90,6 +91,12 @@ public class FolderService {
         } catch (IOException e) {
             throw new RuntimeException("Could not create directory '" + folderName + "' in " + fileStorageLocation, e);
         }
+    }
+    
+    public List<FileEntity> ls(String dir){
+    	List<FileEntity> files = this.fileRepository.findByParentDir(dir);
+    	
+    	return files;
     }
 
 }
