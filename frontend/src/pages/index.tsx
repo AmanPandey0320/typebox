@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { useRouter as useNav } from "next/navigation";
 import Link from "next/link";
 import { Grid2X2, List } from "lucide-react";
-import { getFileDefination } from "@/components/dirView/lib";
+import { getFileDefination } from "@/lib/api";
 
 const Home: React.FC = () => {
   const [dirs, setDirs] = useState<string[]>([]);

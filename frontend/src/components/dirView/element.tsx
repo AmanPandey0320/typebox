@@ -7,7 +7,7 @@ import { useRouter as useNav } from "next/navigation";
 import { useRouter } from "next/router";
 
 import defaultThumbnail from "@/assets/images/thumbnail.png";
-import { handleFileClick } from "./lib";
+import { handleFileClick } from "../../lib/api";
 
 export interface ViewProps {
     file: FileItem;

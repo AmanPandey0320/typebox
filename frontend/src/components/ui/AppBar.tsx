@@ -1,21 +1,57 @@
 import React, { Fragment, useRef } from "react";
-import { Cloud, FileUp, FolderPlus, Plus, Trash } from 'lucide-react';
+import { FileUp, FolderPlus } from 'lucide-react';
 import { Modal } from "./Modal";
+import { useRouter } from "next/router";
+import { uploadFiles } from "@/lib/api";
+import { Bounce, toast, ToastContainer } from "react-toastify";
 
 const AppBar: React.FC = () => {
     const ref = useRef<HTMLInputElement>(null);
     const newFolderRef = useRef<HTMLInputElement>(null);
     const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const query = useRouter().query;
 
     const toggleModal = (open: boolean) => {
-        setIsModalOpen(open);   
+        setIsModalOpen(open);
     }
 
     const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0];
-        if (file) {
+        const files = event.target.files;
+        const dir = query?.dir as string || "box";
+        const baseDir = dir.split("/").pop() as string;
+
+        if (files != null) {
             // TODO: Handle file upload logic here
-            console.log("File selected:", file.name);
+            uploadFiles(files, baseDir)
+                .then(() => {
+                    toast.success('File uploaded!', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                        transition: Bounce,
+                    });
+                })
+                .catch(() => {
+                    toast.error('Error occured!', {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: false,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                        transition: Bounce,
+                    });
+                })
+                .finally(() => {
+                    window.location.reload();
+                })
         }
     };
 
@@ -28,6 +64,7 @@ const AppBar: React.FC = () => {
 
     return (
         <Fragment>
+            <ToastContainer />
             <header className="w-full h-[72px] flex items-center px-6">
                 <div className="flex flex-row-reverse items-center w-full">
                     <input ref={ref} type="file" className="hidden" onChange={handleFileUpload} />
