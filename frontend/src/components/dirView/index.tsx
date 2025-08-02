@@ -25,8 +25,6 @@ const DirView: React.FC<DirViewProps> = ({ dir, isGridView }) => {
 
   return (
     <div className="text-zinc-300 pt-2">
-      <h3>{getDirname(dir)}</h3>
-      <br />
       <div className={`grid ${isGridView ? "grid-cols-5 gap-2" : "grid-cols-1 gap-2"}`}>
         {
           files.map((file, index) => {

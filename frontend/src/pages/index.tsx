@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from "react";
 import FileList from "../components/dirView";
-import Console from "@/components/Console";
+import Console from "@/components/ui/Console";
 import { useRouter } from "next/router";
 import { useRouter as useNav } from "next/navigation";
 import Link from "next/link";
