@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import FileList from "../components/DirView";
+import FileList from "../components/dirView";
 import Console from "@/components/Console";
 import { useRouter } from "next/router";
 import { useRouter as useNav } from "next/navigation";
