@@ -61,4 +61,13 @@ public class FileController {
                         "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+	
+	
+	@PostMapping("/create_folder")
+	public ResponseEntity<?> createFolder(
+			@RequestParam("name") String folderName,
+			@RequestParam("dir") String dir
+			){
+		return null;
+	}
 }

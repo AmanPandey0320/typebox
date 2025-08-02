@@ -23,6 +23,8 @@ import com.typebox.backend.entity.FileEntity;
 import com.typebox.backend.pojo.SavedFile;
 import com.typebox.backend.repository.FileRepository;
 
+import jakarta.annotation.PostConstruct;
+
 
 
 @Service
@@ -42,6 +44,23 @@ public class FileService {
 		super();
 		this.fileRepository = fileRepository;
 		this.fileStorageLocation = Paths.get(uploadDirectory).toAbsolutePath().normalize();
+	}
+	
+	/**
+	 * 
+	 */
+	@PostConstruct
+	private void createBase() {
+		fileRepository.insertFileEntity(
+				"box", 
+				"Box", 
+				fileStorageLocation.toAbsolutePath().toString(), 
+				"file", 
+				"gray", 
+				"user", 
+				"box"
+		);
+
 	}
 
 	/**
@@ -133,6 +152,20 @@ public class FileService {
             }
         } catch (MalformedURLException ex) {
             throw new RuntimeException("File path is invalid: " + fileEntity.getFilePath(), ex);
+        }
+    }
+    
+    public Path createFolderInStorageLocation(String folderName,String baseDir) {
+        try {
+            // Normalize and resolve the folder path inside the base storage location
+            Path folderPath = fileStorageLocation.resolve(folderName).normalize();
+
+            // Create the directory including any nonexistent parent directories
+            Files.createDirectories(folderPath);
+
+            return folderPath;
+        } catch (IOException e) {
+            throw new RuntimeException("Could not create directory '" + folderName + "' in " + fileStorageLocation, e);
         }
     }
 
