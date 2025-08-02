@@ -55,3 +55,35 @@ export const uploadFiles = async (files: FileList, baseDir: string) => {
         ...data
     }
 }
+
+export const createFolder = async (baseDir: string, name: string) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+    const urlencoded = new URLSearchParams();
+    urlencoded.append("name", name);
+    urlencoded.append("baseDir", baseDir);
+
+    const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: urlencoded
+    };
+
+    const res = await fetch("http://localhost:8080/api/v1/file/create_folder", requestOptions);
+
+    if (!res.ok) {
+        const { error } = await res.json();
+        return {
+            status: false,
+            error: handleError(error)
+        }
+    }
+
+    const data = await res.json();
+
+    return {
+        status: true,
+        ...data
+    }
+}

@@ -2,7 +2,7 @@ import React, { Fragment, useRef } from "react";
 import { FileUp, FolderPlus } from 'lucide-react';
 import { Modal } from "./Modal";
 import { useRouter } from "next/router";
-import { uploadFiles } from "@/lib/api";
+import { createFolder, uploadFiles } from "@/lib/api";
 import { Bounce, toast, ToastContainer } from "react-toastify";
 
 const AppBar: React.FC = () => {
@@ -56,9 +56,40 @@ const AppBar: React.FC = () => {
     };
 
     const handleCreateFolder = () => {
-        // TODO: Handle create folder logic here
-        console.log("Creating new folder...", newFolderRef.current?.value);
-        setIsModalOpen(false);
+        const dir = query?.dir as string || "box";
+        const baseDir = dir.split("/").pop() as string;
+        createFolder(baseDir, newFolderRef.current?.value as string)
+            .then(() => {
+                toast.success('Folder created!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    transition: Bounce,
+                });
+            })
+            .catch(() => {
+                toast.error('Error occured!', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: false,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                    transition: Bounce,
+                });
+            })
+            .finally(() => {
+                setIsModalOpen(false);
+                window.location.reload();
+            })
+
     }
 
 
