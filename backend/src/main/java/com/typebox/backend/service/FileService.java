@@ -51,6 +51,11 @@ public class FileService {
 	 */
 	@PostConstruct
 	private void createBase() {
+		if(fileRepository.findById("box").isPresent()) {
+			return;
+		}
+		
+		// create if not
 		fileRepository.insertFileEntity(
 				"box", 
 				"Box", 
