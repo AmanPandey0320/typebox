@@ -1,6 +1,6 @@
 import { getDirname, getFilesInDirectory } from "@/lib/api";
 import React from "react";
-import { ListView } from "./element";
+import { GridView, ListView } from "./element";
 
 interface DirViewProps {
   isGridView: boolean;
@@ -28,11 +28,18 @@ const DirView: React.FC<DirViewProps> = ({ dir, isGridView }) => {
       <h3>{getDirname(dir)}</h3>
       <br />
       <div className={`grid ${isGridView ? "grid-cols-5 gap-2" : "grid-cols-1 gap-2"}`}>
-       {
-          files.map((file, index) => (
-            <ListView key={index} file={file} />
-          ))
-       }
+        {
+          files.map((file, index) => {
+            if (isGridView) {
+              return (
+                <GridView key={index} file={file} />
+              );
+            }
+            return (
+              <ListView key={index} file={file} />
+            );
+          })
+        }
       </div>
     </div>
   );
