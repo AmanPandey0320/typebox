@@ -70,7 +70,7 @@ export const createFolder = async (baseDir: string, name: string) => {
         body: urlencoded
     };
 
-    const res = await fetch("http://localhost:8080/api/v1/file/create_folder", requestOptions);
+    const res = await fetch(`${BASE_URL}/file/create_folder`, requestOptions);
 
     if (!res.ok) {
         const { error } = await res.json();
@@ -86,4 +86,9 @@ export const createFolder = async (baseDir: string, name: string) => {
         status: true,
         ...data
     }
+}
+
+export const handleDownload = (fileId:string) => {
+    const url = `${BASE_URL}/file/download/${fileId}`
+    window.open(url, '_blank');
 }

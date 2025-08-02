@@ -7,7 +7,7 @@ import { useRouter as useNav } from "next/navigation";
 import { useRouter } from "next/router";
 
 import defaultThumbnail from "@/assets/images/thumbnail.png";
-import { handleFileClick } from "../../lib/api";
+import { handleDownload, handleFileClick } from "../../lib/api";
 
 export interface ViewProps {
     file: FileItem;
@@ -31,7 +31,7 @@ export function ListView({ file }: ViewProps) {
             <div className="col-span-4 text-sm text-zinc-400">{file.lastModified || file.createdAt || new Date().toLocaleString()}</div>
             <div className="col-span-2 text-zinc-400">{file.size || "-"}</div>
             <div className="col-span-3 flex flex-row justify-end items-center gap-2">
-                <button className="p-1 rounded-md text-zinc-400 hover:text-zinc-200 transition-all duration-200 hover:cursor-pointer">
+                <button onClick={() => {handleDownload(file.id)}} className="p-1 rounded-md text-zinc-400 hover:text-zinc-200 transition-all duration-200 hover:cursor-pointer">
                     <Download size={"16px"} />
                 </button>
                 <button className="p-1 rounded-md text-zinc-400 hover:text-zinc-200 transition-all duration-200 hover:cursor-pointer">
@@ -114,7 +114,11 @@ export function GridView({ file }: ViewProps) {
                             <Pencil size={16} />
                             <span>Rename</span>
                         </button>
-                        <button className="block flex flex-row gap-2 items-center w-full text-left px-4 py-2 text-xs font-semibold hover:bg-white/[0.05] hover:cursor-pointer transition-all duration-200">
+                        <button onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownload(file.id);
+                            setMenuOpen(false);
+                        }} className="block flex flex-row gap-2 items-center w-full text-left px-4 py-2 text-xs font-semibold hover:bg-white/[0.05] hover:cursor-pointer transition-all duration-200">
                             <Download size={16} />
                             <span>Download</span>
                         </button>
