@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useState } from "react";
-import FileList from "../components/dirView";
+import DirView from "../components/dirView";
 import Console from "@/components/ui/Console";
 import { useRouter } from "next/router";
 import { useRouter as useNav } from "next/navigation";
@@ -10,10 +10,10 @@ const Home: React.FC = () => {
   const [dirs, setDirs] = useState<string[]>([]);
   const [isGridView, setIsGridView] = useState<boolean>(true);
   const query = useRouter().query;
-  const nav = useNav()
+  const nav = useNav();
 
   useEffect(() => {
-    const dir = query?.dir as string || "Box";
+    const dir = query?.dir as string || "box";
     const currDirs = dir.split("/");
     setDirs(currDirs);
   }, [query.dir]);
@@ -58,7 +58,7 @@ const Home: React.FC = () => {
             </button>
           </div>
         </div>
-        <FileList isGridView={isGridView} dir={dirs.length > 0 ? dirs[dirs.length - 1] : "box"} />
+        <DirView isGridView={isGridView} dir={dirs.length > 0 ? dirs[dirs.length - 1] : "box"} />
         {/* <button onClick={handleAddDir} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
           {"add dir"}
         </button> */}

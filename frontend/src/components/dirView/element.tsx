@@ -17,12 +17,12 @@ export function ListView({ file }: ViewProps) {
     return (
         <div className="grid grid-cols-20 items-center justify-between py-2 px-4 rounded-sm hover:bg-white/[0.075] trabsition-all duration-200">
             <div className="col-span-8 flex flex-row gap-2 text-sm items-center">
-                <PdfSolidIcon size={"24px"} fill="#f28b82" />
+                <FileViewIcon type={file.type} name={file.name} />
                 <span>{file.name}</span>
             </div>
-            <div className="col-span-3">{file.owner || "me"}</div>
-            <div className="col-span-4">{file.lastModified || new Date().toLocaleString()}</div>
-            <div className="col-span-2">{file.size}</div>
+            <div className="col-span-3">{file.ownerId || "me"}</div>
+            <div className="col-span-4 text-sm text-zinc-400">{file.lastModified || file.created_at || new Date().toLocaleString()}</div>
+            <div className="col-span-2 text-zinc-400">{file.size || "-"}</div>
             <div className="col-span-3 flex flex-row justify-end items-center gap-2">
                 <button className="p-1 rounded-md text-zinc-400 hover:text-zinc-200 transition-all duration-200 hover:cursor-pointer">
                     <Download size={"16px"} />
@@ -50,6 +50,7 @@ export function ListView({ file }: ViewProps) {
  * @returns 
  */
 import React, { useRef, useState } from "react";
+import FileViewIcon from "@/assets/icons";
 
 export function GridView({ file }: ViewProps) {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -75,10 +76,10 @@ export function GridView({ file }: ViewProps) {
 
     return (
         <div className="flex flex-col gap-1 bg-white/[0.1] hover:bg-white/[0.125] p-2 rounded-lg transition-all duration-200 relative">
-            <div className="grid grid-cols-10 items-center justify-between py-2 px-4 rounded-sm trabsition-all duration-200">
+            <div className="grid grid-cols-10 items-center justify-between py-2 px-2 rounded-sm trabsition-all duration-200">
                 <div className="col-span-8 flex flex-row gap-2 text-sm items-center">
-                    <PdfSolidIcon size={"24px"} fill="#f28b82" />
-                    <span>{file.name}</span>
+                    <FileViewIcon type={file.type} name={file.name} />
+                    <span>{file.name.length > 16 ? `${file.name.slice(0, 16)}...` : file.name}</span>
                 </div>
                 <div className="col-span-2 flex flex-row justify-end items-center gap-2 relative">
                     <button
@@ -129,9 +130,9 @@ export function GridView({ file }: ViewProps) {
                         </div>
                 </div>
             </div>
-            <div>
+            {file.type === "file" && <div>
                 <Image className="rounded-lg" src={file.thumbnail || defaultThumbnail} alt={file.name} width={256} height={256} />
-            </div>
+            </div>}
         </div>
     );
 }
