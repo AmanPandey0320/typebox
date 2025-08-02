@@ -93,11 +93,10 @@ export function GridView({ file }: ViewProps) {
                     </button>
                     {/* Floating menu */}
                     <div
-                        className={`absolute z-50 w-48 bg-zinc-800 text-zinc-400 border border-zinc-600 rounded shadow-lg transition-all duration-200 ease-out ${menuOpen ? 'opacity-100 translate-x-0 pointer-events-auto' : 'opacity-0 translate-x-4 pointer-events-none'}`}
+                        className={`absolute z-50 w-48 bg-zinc-800 text-zinc-400 border border-zinc-600 rounded shadow-lg transition-all duration-200 ease-out ${menuOpen ? 'opacity-100 translate-x-0 pointer-events-auto block' : 'opacity-0 translate-x-4 pointer-events-none hidden'}`}
                         style={{
-                            top: "50%",
-                            left: "50%",
-                            transform: "translateY(-50%)",
+                            top: "10%",
+                            left: "auto",
                             minWidth: "12rem"
                         }}
                         onClick={handleCloseMenu}
