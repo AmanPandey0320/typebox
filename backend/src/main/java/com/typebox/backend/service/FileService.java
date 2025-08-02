@@ -142,5 +142,17 @@ public class FileService {
             throw new RuntimeException("File path is invalid: " + fileEntity.getFilePath(), ex);
         }
     }
+    
+    /**
+     * 
+     * @param id
+     * @return
+     */
+    public FileEntity getFileDetails(String id) {
+    	FileEntity fileEntity = fileRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("File not found with id " + id));
+    	
+    	return fileEntity;
+    }
 
 }

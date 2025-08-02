@@ -107,4 +107,19 @@ public class FileController {
 					.build();
 		}
 	}
+	
+	@GetMapping("/define/{id}")
+	public ResponseEntity<?> defineFile(@PathVariable("id") String id){
+		try {
+			return new ResponseHandler()
+					.status(HttpStatus.OK)
+					.data(List.of(this.fileService.getFileDetails(id)))
+					.build();
+		}catch(Exception e) {
+			return new ResponseHandler()
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.error(List.of(e.getLocalizedMessage()))
+					.build();
+		}
+	}
 }
