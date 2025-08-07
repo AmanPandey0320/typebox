@@ -7,6 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
@@ -17,6 +20,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity(name = "files")
+@Table(name = "files")
 public class FileEntity {
 
     @Id
@@ -53,6 +57,30 @@ public class FileEntity {
 
     @Column(nullable = false)
     private String parentDir = "box"; 
+    
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        createdAt = now;
+        lastModified = now;
+        if (ownerId == null) {
+            ownerId = "user";
+        }
+        if (color == null) {
+            color = "gray";
+        }
+        if (type == null) {
+            type = "file";
+        }
+        if (parentDir == null) {
+            parentDir = "box";
+        }
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        lastModified = LocalDateTime.now();
+    }
 
     
 }
